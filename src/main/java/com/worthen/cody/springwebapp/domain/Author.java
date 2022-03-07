@@ -1,13 +1,18 @@
 package com.worthen.cody.springwebapp.domain;
 
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 
-@Entity // annotation to make this a JPA entity (Java Persistence API)
+// Hibernate is an implementation of JPA (Java Persistence API)
+
+@Entity // annotation to make this a JPA entity
 public class Author {
 
 	@Id // each entity needs an ID
@@ -16,17 +21,18 @@ public class Author {
 
 	private String firstName;
 	private String lastName;
-	private Set<Book> books;
 
-	public Author() {
+	@ManyToMany(mappedBy = "authors") // many to many relation to books, mapped by authors
+	private Set<Book> books = new HashSet<>();
+
+	public Author() { // JPA requires a default constructor
 		super();
 	}
 
-	public Author(String firstName, String lastName, Set<Book> books) {
+	public Author(String firstName, String lastName) {
 		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.books = books;
 	}
 
 	public Long getId() {
@@ -59,6 +65,28 @@ public class Author {
 
 	public void setBooks(Set<Book> books) {
 		this.books = books;
+	}
+
+	@Override
+	public String toString() {
+		return "Author [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", books=" + books + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Author other = (Author) obj;
+		return Objects.equals(id, other.id);
 	}
 
 }

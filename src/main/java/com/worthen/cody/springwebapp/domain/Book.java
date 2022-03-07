@@ -1,11 +1,19 @@
 package com.worthen.cody.springwebapp.domain;
 
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+
+// Hibernate is an implementation of JPA
 
 @Entity // annotation to make this a JPA entity (Java Persistence API)
 public class Book {
@@ -16,17 +24,23 @@ public class Book {
 
 	private String title;
 	private String isbn;
-	private Set<Author> authors;
 
-	public Book() {
+	@ManyToOne
+	private Publisher publisher;
+
+	@ManyToMany
+	@JoinTable(name = "author_book", joinColumns = @JoinColumn(name = "book_id"), inverseJoinColumns = @JoinColumn(name = "author_id"))
+	// many to many relation to books
+	private Set<Author> authors = new HashSet<>();
+
+	public Book() { // JPA requires a default constructor
 		super();
 	}
 
-	public Book(String title, String isbn, Set<Author> authors) {
+	public Book(String title, String isbn) {
 		super();
 		this.title = title;
 		this.isbn = isbn;
-		this.authors = authors;
 	}
 
 	public Long getId() {
@@ -53,12 +67,43 @@ public class Book {
 		this.isbn = isbn;
 	}
 
+	public Publisher getPublisher() {
+		return publisher;
+	}
+
+	public void setPublisher(Publisher publisher) {
+		this.publisher = publisher;
+	}
+
 	public Set<Author> getAuthors() {
 		return authors;
 	}
 
 	public void setAuthors(Set<Author> authors) {
 		this.authors = authors;
+	}
+
+	@Override
+	public String toString() {
+		return "Book [id=" + id + ", title=" + title + ", isbn=" + isbn + ", publisher=" + publisher + ", authors="
+				+ authors + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Book other = (Book) obj;
+		return Objects.equals(id, other.id);
 	}
 
 }
