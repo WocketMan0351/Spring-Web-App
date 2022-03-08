@@ -18,9 +18,10 @@ public class BookController {
 
 	@RequestMapping("/books") // maps to a specific URL
 	public String getBooks(Model model) {
-		// Spring provides a model
+		// Spring provides a model. We add the books from the db to the model under an
+		// attribute.
 		model.addAttribute("books", bookRepository.findAll()); // gets books from the db and assigns it to "books"
-		return "books"; // returns a string that tells Spring MVC to apply the view "books"
+		return "books/list"; // returns a string that tells Spring MVC to apply the view "books"
 	}
 
 }
